@@ -83,14 +83,6 @@ var budgetController = (function() {
             return newItem;
         },
 
-        addOverdraft: function() {
-
-            if (data.budget <= 50) {
-                this.addItem('exp', 'Overdraft Fee', 25);
-                this.calculateBudget();
-            }
-        },
-
         deleteItem: function(type, id) {
             var ids, index;
 
@@ -261,10 +253,6 @@ var UIController = (function() {
 
         },
 
-        addOverDraftFee: function() {
-            this.addListItem(budgetController, exp);
-        },
-
         deleteListItem: function(selectorID) {
             
             var el =  document.getElementById(selectorID);
@@ -428,10 +416,17 @@ var controller = (function(budgetCtrl, UICtrl) {
 
             //6. Calculate and update percentages
             updatePercentages();
-
-            //Check for overdraft
-            budgetCtrl.addOverdraft();
         }
+    };
+
+    var ctrlAddOverdraft = function() {
+
+        //Add overdraft to budget controller data
+
+        //Add overdraft to UI 
+
+        //Calculate and update budget
+
     };
 
 
@@ -479,14 +474,6 @@ var controller = (function(budgetCtrl, UICtrl) {
 })(budgetController, UIController);
 
 controller.init();
-
-
-
-
-
-
-
-
 
 
 
