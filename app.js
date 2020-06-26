@@ -83,6 +83,28 @@ var budgetController = (function() {
             return newItem;
         },
 
+        addOverDraftFee: function() {
+
+            if (data.totals.exp > data.totals.inc) {
+                if (data.budget <= 0) {
+                
+                    this.addItem('exp', 'Overdraft Fee', 15);
+                    this.calculateBudget();
+                    this.calculatePercentages();
+                }
+            }      
+        },
+
+        checkOverdraft: function() {
+    
+               if (data.allItems.exp[data.allItems.exp.length - 1].description !== 'Overdraft Fee') {
+                    this.addOverDraftFee();
+               }
+               else {
+                return;
+               }
+        },
+
         deleteItem: function(type, id) {
             var ids, index;
 
@@ -416,12 +438,18 @@ var controller = (function(budgetCtrl, UICtrl) {
 
             //6. Calculate and update percentages
             updatePercentages();
+
+            //check for overdraft
+            ctrlAddOverdraft();
+
         }
     };
 
     var ctrlAddOverdraft = function() {
 
+        //If expenses array doesnt have an overdraft fee already, 
         //Add overdraft to budget controller data
+        budgetCtrl.checkOverdraft();
 
         //Add overdraft to UI 
 
