@@ -85,24 +85,11 @@ var budgetController = (function() {
 
         addOverDraftFee: function() {
 
-            if (data.totals.exp > data.totals.inc) {
-                if (data.budget <= 0) {
-                
-                    this.addItem('exp', 'Overdraft Fee', 15);
-                    this.calculateBudget();
-                    this.calculatePercentages();
-                }
-            }      
-        },
-
-        checkOverdraft: function() {
-    
-               if (data.allItems.exp[data.allItems.exp.length - 1].description !== 'Overdraft Fee') {
-                    this.addOverDraftFee();
-               }
-               else {
-                return;
-               }
+            var newFee = this.addItem('exp', 'Overdraft Fee', 15);
+            this.calculateBudget();
+            this.calculatePercentages();
+            
+            return newFee;
         },
 
         deleteItem: function(type, id) {
@@ -261,8 +248,8 @@ var UIController = (function() {
             } 
             else if (type === 'exp'){
                 element = DOMStrings.expensesContainer;
-                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
-            }
+                html = '<div class="item clearfix" id="exp-%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%value%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>';
+            };
 
             //Replace placeholder text with some actual data
 
@@ -439,22 +426,31 @@ var controller = (function(budgetCtrl, UICtrl) {
             //6. Calculate and update percentages
             updatePercentages();
 
-            //check for overdraft
-            ctrlAddOverdraft();
+             //check for overdraft
+             ctrlAddOverdraft();
 
         }
     };
 
     var ctrlAddOverdraft = function() {
 
-        //If expenses array doesnt have an overdraft fee already, 
-        //Add overdraft to budget controller data
-        budgetCtrl.checkOverdraft();
+        if (budgetCtrl.getBudget().totalExp > budgetCtrl.getBudget().totalInc) {
+            if (budgetCtrl.getBudget().budget <= 0){
+                //Add overdraft fee to data
+                var addOverdraft = budgetCtrl.addOverDraftFee();
 
-        //Add overdraft to UI 
+                //Add overdraft fee to UI
+                UICtrl.addListItem(addOverdraft, 'exp');
 
-        //Calculate and update budget
+                //update budget ui
+                updateBudget();
 
+                //Calculate and update budget
+                updatePercentages();
+
+                alert('You are being charged a $15 overdraft fee for this purchase');
+            }
+        }
     };
 
 
